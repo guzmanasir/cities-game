@@ -1,13 +1,19 @@
-<!--The content below is only a placeholder and can be replaced.-->
-<h1>{{ title }}</h1>
 
-<!-- this creates a google map on the page with the given lat/lng from -->
-<!-- the component as the initial center of the map: -->
-<div>
-    <agm-map [styles]="styleMap" [streetViewControl]="false" [zoom]="4" (mapClick)="setMarker($event)" >
-        <agm-marker [latitude]="latMarker" [longitude]="lngMarker"></agm-marker>
-      </agm-map> 
+<div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="30px">{{ points }} cities placed </div>
+<div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="10px">{{score}} kilometers left</div>
+<div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="10px">
+   {{ cities[indexCity].capitalCity }}
 </div>
 
 
+
+
+<div [hidden]="loading">
+    <agm-map #agmMap [styles]="styleMap" [streetViewControl]="false" [zoom]="4" (mapClick)="setMarker($event)" >
+        <agm-marker [latitude]="latMarker" [longitude]="lngMarker"></agm-marker>
+      </agm-map> 
+     
+</div>
+
+<div fxLayout="row" fxLayoutAlign="center"><button mat-raised-button (click)="placeMarker()">Place</button></div>
 

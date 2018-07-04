@@ -1,10 +1,10 @@
-import { Component, NgZone } from '@angular/core';
+import { Component, NgZone, ViewChild, AfterViewInit } from '@angular/core';
 import { coordenates } from '../providers/getCoordenates';
-declare var google: any;
-let cities = require('../resources/capitalCities.json').capitalCities;
 import { GoogleMapsAPIWrapper } from '@agm/core';
 import { MapsAPILoader } from '@agm/core';
+import { AgmMap } from '@agm/core';
 import * as async from "async";
+import { CitiesService } from '../providers/citiesJSON';
 
 declare var google: any;
 @Component({
@@ -14,6 +14,8 @@ declare var google: any;
 })
 
 export class AppComponent extends GoogleMapsAPIWrapper {
+    @ViewChild(AgmMap)
+    public agmMap: AgmMap
     title: string = 'My first AGM project';
     lat: number = 51.678418;
     lng: number = 7.809007;
@@ -23,363 +25,15 @@ export class AppComponent extends GoogleMapsAPIWrapper {
     private lngMarker;
     private geocoder;
     private loading;
-    constructor(private __loader: MapsAPILoader, private __zone: NgZone, private coordenates: coordenates) {
+    private cities: any;
+    private indexCity = 0;
+    private score = 1500;
+    private points = 0;
+    constructor( private citiesService: CitiesService ,private __loader: MapsAPILoader, private __zone: NgZone, private coordenates: coordenates) {
         super(__loader, __zone);
-        this.styleMap = [
-            {
-                "featureType": "all",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "all",
-                "elementType": "labels",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "administrative",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "administrative.country",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "administrative.country",
-                "elementType": "geometry.stroke",
-                "stylers": [
-                    {
-                        "visibility": "on"
-                    },
-                    {
-                        "color": "#898e8c"
-                    }
-                ]
-            },
-            {
-                "featureType": "administrative.province",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "administrative.locality",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "administrative.neighborhood",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "administrative.land_parcel",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape",
-                "elementType": "all",
-                "stylers": [
-                    {
-                        "visibility": "on"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    },
-                    {
-                        "hue": "#ff0000"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape",
-                "elementType": "labels",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape.man_made",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "on"
-                    },
-                    {
-                        "color": "#944242"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape.man_made",
-                "elementType": "geometry.fill",
-                "stylers": [
-                    {
-                        "color": "#ffffff"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape.natural",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "on"
-                    },
-                    {
-                        "color": "#ffffff"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape.natural.landcover",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "landscape.natural.terrain",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    },
-                    {
-                        "saturation": "-1"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi",
-                "elementType": "all",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "poi.attraction",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road",
-                "elementType": "geometry.stroke",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.highway",
-                "elementType": "geometry.fill",
-                "stylers": [
-                    {
-                        "color": "#292929"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.highway",
-                "elementType": "geometry.stroke",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    },
-                    {
-                        "color": "#494949"
-                    },
-                    {
-                        "saturation": "-85"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.arterial",
-                "elementType": "geometry.fill",
-                "stylers": [
-                    {
-                        "color": "#888888"
-                    },
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.local",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "road.local",
-                "elementType": "geometry.fill",
-                "stylers": [
-                    {
-                        "color": "#7f7f7f"
-                    }
-                ]
-            },
-            {
-                "featureType": "transit",
-                "elementType": "all",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "transit",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "transit.line",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "transit.station",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "transit.station.airport",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "transit.station.bus",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "transit.station.rail",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            },
-            {
-                "featureType": "water",
-                "elementType": "geometry",
-                "stylers": [
-                    {
-                        "color": "#dddddd"
-                    },
-                    {
-                        "visibility": "on"
-                    }
-                ]
-            },
-            {
-                "featureType": "water",
-                "elementType": "geometry.fill",
-                "stylers": [
-                    {
-                        "color": "#eeeeee"
-                    }
-                ]
-            },
-            {
-                "featureType": "water",
-                "elementType": "geometry.stroke",
-                "stylers": [
-                    {
-                        "visibility": "off"
-                    }
-                ]
-            }
-        ]
+        
         this.bounds = { se: [35.626316, -11.859641], nw: [72.747395, 40.808528] }
-        console.log(cities)
+   
 
     }
     setMarker(ev) {
@@ -388,39 +42,29 @@ export class AppComponent extends GoogleMapsAPIWrapper {
         this.lngMarker = ev.coords.lng;
         console.log("los marker", this.latMarker, this.lngMarker, ev)
     }
+   
+
     ngOnInit() {
+        console.log("cities", this.cities, this.agmMap)
+        this.styleMap = this.coordenates.getMapStyle();
         this.__loader.load().then(() => {
             this.geocoder = new google.maps.Geocoder();
+            this.citiesService.getCities().subscribe((cities: any)=> {
+                console.log("en el service", cities)
+                this.cities = cities.capitalCities;
 
-            /*  cities.forEachAsync(async (citie) => {
-                  console.log(citie.capitalCity)
-                  await this.geocoder.geocode({ address: citie.capitalCity }, (results, status) => {
-                      console.log(results)
-                  })
-              })*/
-            console.log("las cities antes que nada", cities)
-            this.getCoordenates()
-
-
-
-
-
+                this.getCoordenates()
+            })
+            
         })
-
 
     }
 
 
     getCoordenates() {
         this.loading = true;
-        /* for(let citie of cities) {
-             console.log(citie)
-             await this.geocoder.geocode({ address: citie.capitalCity }, (response) => {
-                 console.log("la respuesta")
-             })
-             console.log("el content")
-         }*/
-        async.eachSeries(cities, (item, cb) => {
+        console.log("entro aqui", )
+        async.eachSeries(this.cities, (item, cb) => {
             console.log(item.capitalCity)
             this.geocoder.geocode({ address: encodeURIComponent(item.capitalCity) }, (response) => {
                 console.log("la respuesta", response[0])
@@ -428,13 +72,44 @@ export class AppComponent extends GoogleMapsAPIWrapper {
                 item.lat = response[0].geometry.location.lat()
                 item.long = response[0].geometry.location.lng()
                 cb()
-                console.log("loading")
+                console.log("loading", item)
 
 
             })
         }, () => {
             this.loading = false;
-            console.log("this", this.loading)
+            this.agmMap.triggerResize();
+            
         })
     }
+
+    placeMarker() {
+        let distance = this.getDistanceFromLatLonInKm(this.cities[this.indexCity].lat, this.cities[this.indexCity].long, this.latMarker, this.lngMarker);
+        if(this.indexCity + 1 < this.cities.length) {
+            this.indexCity += 1;
+        }
+        if(distance <= 50) {
+            this.points += 1; 
+        }
+        this.score -= distance;
+        console.log("la distnacia", distance)
+    }
+
+    getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+        var R = 6371; 
+        var dLat = this.deg2rad(lat2-lat1);  
+        var dLon = this.deg2rad(lon2-lon1); 
+        var a = 
+          Math.sin(dLat/2) * Math.sin(dLat/2) +
+          Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) * 
+          Math.sin(dLon/2) * Math.sin(dLon/2)
+          ; 
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+        var d = R * c; 
+        return d;
+      }
+      
+      deg2rad(deg) {
+        return deg * (Math.PI/180)
+      }
 }
