@@ -17,7 +17,7 @@ import { coordenates } from '../providers/getCoordenates';
     BrowserModule,
     HttpClientModule,
     AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyBVMiWGFeeehden5YX6fpBeXOCcsD-rAzY'
+      apiKey: ''
     })
   ],
   providers: [AgmMarker, coordenates],
