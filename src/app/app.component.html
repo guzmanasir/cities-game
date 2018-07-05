@@ -1,19 +1,37 @@
+<div fxLayout="row" fxLayoutAlign="center" [hidden]="loading">
+  <div xLayout="column" fxFlexFill>
 
-<div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="30px">{{ points }} cities placed </div>
-<div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="10px">{{score}} kilometers left</div>
-<div fxLayout="row" fxLayoutAlign="center" fxLayoutGap="10px">
-   {{ cities[indexCity].capitalCity }}
-</div>
+      <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral">
+        <div xLayout="column" fxLayoutAlign="center" class="card-header">{{ points }} cities placed </div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral">
+        <div xLayout="column" fxLayoutAlign="center" class="card-header">{{score | round}} kilometers left </div>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral" class="card-body" *ngIf="score > 0">
+        Select the location of "{{ cities ? cities[indexCity].capitalCity : ''}}"
+      </div>
+      <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral" class="card-body" *ngIf="score <= 0">
+        You lost
+      </div>
 
 
 
 
-<div [hidden]="loading">
-    <agm-map #agmMap [styles]="styleMap" [streetViewControl]="false" [zoom]="4" (mapClick)="setMarker($event)" >
+
+
+    <div>
+      <agm-map #agmMap [styles]="styleMap" [streetViewControl]="false" [zoom]="4" (mapClick)="setMarker($event)">
         <agm-marker [latitude]="latMarker" [longitude]="lngMarker"></agm-marker>
-      </agm-map> 
-     
+      </agm-map>
+
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral">
+      <button class="btn btn-primary" [disabled]="score < 0" (click)="placeMarker()">Place</button>
+    </div>
+
+
+
+  </div>
+
 </div>
-
-<div fxLayout="row" fxLayoutAlign="center"><button mat-raised-button (click)="placeMarker()">Place</button></div>
-

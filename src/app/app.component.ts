@@ -5,7 +5,8 @@ import { MapsAPILoader } from '@agm/core';
 import { AgmMap } from '@agm/core';
 import * as async from "async";
 import { CitiesService } from '../providers/citiesJSON';
-
+import { AlertComponent } from 'ngx-bootstrap/alert';
+import { AlertService } from '../services/alert.service';
 declare var google: any;
 @Component({
     selector: 'app-root',
@@ -14,8 +15,9 @@ declare var google: any;
 })
 
 export class AppComponent extends GoogleMapsAPIWrapper {
-    @ViewChild(AgmMap)
-    public agmMap: AgmMap
+    @ViewChild(AgmMap) public agmMap: AgmMap
+    @ViewChild(AlertComponent) public alert: AlertComponent;
+    
     title: string = 'My first AGM project';
     lat: number = 51.678418;
     lng: number = 7.809007;
@@ -29,7 +31,7 @@ export class AppComponent extends GoogleMapsAPIWrapper {
     private indexCity = 0;
     private score = 1500;
     private points = 0;
-    constructor( private citiesService: CitiesService ,private __loader: MapsAPILoader, private __zone: NgZone, private coordenates: coordenates) {
+    constructor( private alertService: AlertService, private citiesService: CitiesService ,private __loader: MapsAPILoader, private __zone: NgZone, private coordenates: coordenates) {
         super(__loader, __zone);
         
         this.bounds = { se: [35.626316, -11.859641], nw: [72.747395, 40.808528] }
@@ -89,9 +91,19 @@ export class AppComponent extends GoogleMapsAPIWrapper {
             this.indexCity += 1;
         }
         if(distance <= 50) {
+            this.alertService.addAlert(
+                'Success',
+                'Great',
+                3000
+              );
             this.points += 1; 
         }
-        this.score -= distance;
+        if (this.score - distance > 0) {
+            this.score -= distance;
+        } else {
+            this.score = 0;
+        }
+        
         console.log("la distnacia", distance)
     }
 

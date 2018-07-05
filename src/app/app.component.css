@@ -1,3 +1,7 @@
 agm-map {
     height: 500px;
   }
+
+  .paddingGeneral {
+    padding: 10px;
+  }
