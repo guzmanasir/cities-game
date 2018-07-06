@@ -1,6 +1,6 @@
-<div style="position: fixed; top: 50px; right: 30px; z-index:9999;">
+<div style="position: fixed; top: 50px; right: 30px; z-index:9999;" fxLayout="row">
         <div *ngFor="let alert of alerts" style="margin:5px 5px 5px 25px;">
-            <alert [type]="alert.type" [dismissOnTimeout]="alert.timeout" [@flyInOut] style="z-index:9999;" dismissible="true"><h4 style="padding:10px 15px 0 0;">{{ alert.msg }}</h4></alert>
+            <alert [type]="alert.type" [dismissOnTimeout]="alert.timeout" [@flyInOut] style="z-index:9999;" dismissible="true"><p style="padding:10px 15px 0 0;">{{ alert.msg }}</p></alert>
         </div>
     </div>
     

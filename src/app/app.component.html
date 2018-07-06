@@ -1,37 +1,30 @@
+
+<app-alert></app-alert>
+
 <div fxLayout="row" fxLayoutAlign="center" [hidden]="loading">
   <div xLayout="column" fxFlexFill>
 
-      <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral">
-        <div xLayout="column" fxLayoutAlign="center" class="card-header">{{ points }} cities placed </div>
-      </div>
-      <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral">
-        <div xLayout="column" fxLayoutAlign="center" class="card-header">{{score | round}} kilometers left </div>
-      </div>
-      <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral" class="card-body" *ngIf="score > 0">
-        Select the location of "{{ cities ? cities[indexCity].capitalCity : ''}}"
-      </div>
-      <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral" class="card-body" *ngIf="score <= 0">
-        You lost
-      </div>
-
-
-
-
-
-
-    <div>
-      <agm-map #agmMap [styles]="styleMap" [streetViewControl]="false" [zoom]="4" (mapClick)="setMarker($event)">
-        <agm-marker [latitude]="latMarker" [longitude]="lngMarker"></agm-marker>
-      </agm-map>
-
+    <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral">
+      <div xLayout="column" fxLayoutAlign="center" class="card-header">{{ points }} cities placed </div>
     </div>
+    <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral">
+      <div xLayout="column" fxLayoutAlign="center" class="card-header">{{score | round}} kilometers left </div>
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral" class="card-body" *ngIf="!endGame">
+      Select the location of "{{ cities ? cities[indexCity].capitalCity : ''}}"
+    </div>
+    <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral" class="card-body" *ngIf="endGame">
+      {{ score <=0 ? 'Game over' : 'You won!'}} 
+    </div>
+
+    <agm-map #agmMap [styles]="styleMap" [streetViewControl]="false" [minZoom]="3.5" (mapClick)="setMarker($event)" [fitBounds]="bounds">
+      <agm-marker [latitude]="latMarker" [longitude]="lngMarker"></agm-marker>
+    </agm-map>
 
     <div fxLayout="row" fxLayoutAlign="center" class="paddingGeneral">
-      <button class="btn btn-primary" [disabled]="score < 0" (click)="placeMarker()">Place</button>
+      <button class="btn btn-primary" [disabled]="endGame" (click)="placeMarker()">Place</button>
     </div>
 
-
+    </div>
 
   </div>
-
-</div>
