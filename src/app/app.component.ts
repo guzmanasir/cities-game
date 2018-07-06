@@ -18,9 +18,6 @@ export class AppComponent extends GoogleMapsAPIWrapper {
   @ViewChild(AgmMap) public agmMap: AgmMap;
   @ViewChild(AlertComponent) public alert: AlertComponent;
 
-  title = "My first AGM project";
-  lat = 51.678418;
-  lng = 7.809007;
   private endGame: boolean = false;
   private bounds: any;
   private styleMap: any;
